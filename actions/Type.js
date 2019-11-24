@@ -1,0 +1,3 @@
+export const UPDATE_INPUT = 'UPDATE_INPUT';
+export const CLEAR_INPUT = 'CLEAR_INPUT';
+export const HANDLE_CONCULATOR = 'HANDLE_CONCULATOR';
