@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import InputNumberButton from './InputNumberButton';
-import { updateInput, clearInput } from '../actions/Handle';
+import {numberInput, operatorInput, dotInput, clearInput, delInput, handleCalculator} from '../actions/Handle';
 
 class RenderButtons extends Component {
     constructor(props) {
@@ -23,51 +23,25 @@ class RenderButtons extends Component {
         case '7':
         case '8':
         case '9':
-            this.props.updateInput('displayValue', (displayValue === '0') ? input : displayValue + input);
-            if (!nextValue) {
-                this.props.updateInput('firstValue', firstValue + input);
-            } else {
-                this.props.updateInput('secondValue', secondValue + input);
-            }
+            this.props.numberInput('displayValue', input);
             break;
         case '+':
         case '-':
         case 'x':
         case '/':
-            this.props.updateInput('nextValue', true);
-            this.props.updateInput('operator', input);
-            this.props.updateInput('displayValue', (operator !== null ? displayValue.substr(0, displayValue.length -1) : displayValue) + input);
+            this.props.operatorInput('operator', input);
             break;       
         case '.':
-            let dot = displayValue.toString().slice(-1);
-
-            this.props.updateInput('displayValue', dot !== '.' ? displayValue + input : displayValue);
-            if (!nextValue) {
-                this.props.updateInput('firstValue', firstValue + input);
-            } else {
-                this.props.updateInput('secondValue', secondValue + input);
-            }
+            this.props.dotInput('dot', input)
             break;  
         case 'CLEAR': 
             this.props.clearInput();
             break;
         case 'DEL':
-            let string = displayValue.toString();
-            let deletedString = string.substr(0, string.length - 1);
-            let length = string.length;
-
-            this.props.updateInput('displayValue', length == 1 ? '0' : deletedString);
-            this.props.updateInput('firstValue', length == 1 ? '0' : deletedString);
+            this.props.delInput();
             break;    
         case '=':
-            let formatOperator = operator == "x" ? "*" : operator;
-            let result = eval(firstValue + formatOperator + secondValue);
-
-            this.props.updateInput('displayValue', result % 1 === 0 ? result : result.toFixed(2));
-            this.props.updateInput('firstValue', result % 1 === 0 ? result : result.toFixed(2));
-            this.props.updateInput('secondValue', '');
-            this.props.updateInput('nextValue', false);
-            this.props.updateInput('operator', null);
+            this.props.handleCalculator();
             break;  
         }
     }
@@ -109,4 +83,4 @@ const mapStateToProps = state => ({
     calculator: state.calculator
 }); 
 
-export default connect(mapStateToProps, { updateInput, clearInput })(RenderButtons)
+export default connect(mapStateToProps, { numberInput, clearInput, operatorInput, dotInput, delInput, handleCalculator })(RenderButtons)
